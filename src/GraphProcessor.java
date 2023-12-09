@@ -98,9 +98,14 @@ public class GraphProcessor {
      * @return The closest point in the graph to p
      */
     public Point nearestPoint(Point p) {
-        // TODO implement nearestPoint
+        double min = Double.MAX_VALUE;
+        Point closest = null;
+        for (Point curr: map.keySet()){
+            double distance = p.distance(curr);
+            if (distance < min) min = distance; closest = curr;
+        }
 
-        return null;
+        return closest;
     }
 
 
@@ -115,7 +120,9 @@ public class GraphProcessor {
      */
     public double routeDistance(List<Point> route) {
         double d = 0.0;
-        // TODO implement routeDistance
+        for (int i = 0; i < route.size() - 1; i++){
+            d += route.get(i).distance(route.get(i +1)); //distance between each point and the next
+        }
         return d;
     }
     
@@ -129,7 +136,16 @@ public class GraphProcessor {
      * @return true if and onlyu if p2 is reachable from p1 (and vice versa)
      */
     public boolean connected(Point p1, Point p2) {
-        // TODO implement connected
+        Stack<Point> box = new Stack<>();
+        visited.add(p1); box.add(p1);
+        while(!box.isEmpty()){
+            Point myP = box.pop();
+            if(myP.equals(p2)) return true;
+            for(Point p : map.get(myP)){
+                if (! visited.contains(myP)) visited.add(myP); box.add(myP);
+            }
+        }
+
         return false;
     }
 
@@ -146,8 +162,55 @@ public class GraphProcessor {
      * either because start is not connected to end or because start equals end.
      */
     public List<Point> route(Point start, Point end) throws IllegalArgumentException {
-        // TODO implement route
-        return null;
+        if (start.equals(end)) throw new IllegalArgumentException("start and end are the same");
+        if (! connected(start, end)) throw new IllegalArgumentException("start and end aren't connected");
+
+        Map<Point, Double> distMap = new HashMap<>();
+        Map<Point, Point> pathMap = new HashMap<>();
+        for (Point p: points) distMap.put(p, Double.MAX_VALUE);
+
+        Comparator<Point> pointComparator = new Comparator<Point>(){
+            @Override
+            public int compare(Point x, Point y){
+                return distMap.get(x).compareTo(distMap.get(y));
+            }
+        };
+
+        PriorityQueue<Point> pq = new PriorityQueue<>(pointComparator);
+        Point curr = start;
+        distMap.put(start, 0.0);
+        pq.add(curr);
+
+        while(pq.size() > 0){
+            curr = pq.remove();
+            if (curr.equals(end)) break;
+            for (Point p: map.get(curr)){
+                double dist = distMap.get(curr) + curr.distance(p);
+                if (dist < distMap.get(p)){
+                    distMap.put(p, dist);
+                    pathMap.put(p, curr);
+                    pq.add(p);
+                    
+
+                }
+
+            }
+        }
+
+        if(! curr.equals(end)) throw new IllegalArgumentException("no path exists");
+
+        List<Point> ret = new ArrayList<>();
+        curr = end;
+
+        while(curr != null){
+            ret.add(curr);
+            curr = pathMap.get(curr);
+        }
+        Collections.reverse(ret);
+
+
+
+        return ret;
     }
     public static void main(String[] args) throws FileNotFoundException, IOException {
         String name = "data/usa.graph";
