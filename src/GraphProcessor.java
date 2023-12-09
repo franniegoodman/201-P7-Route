@@ -9,6 +9,8 @@ import java.util.*;
  * To do: Add your name(s) as additional authors
  * @author Brandon Fain
  * @author Owen Astrachan modified in Fall 2023
+ * @author Frannie Goodman
+ * @author Jackson Cooke
  *
  */
 public class GraphProcessor {
@@ -21,9 +23,18 @@ public class GraphProcessor {
      */
 
     // include instance variables here
+    int edges;
+    int vertices;
+    Map<Point, ArrayList<Point>> map;
+    List<Point> locations;
+    HashSet<Point> visited;
 
     public GraphProcessor(){
-        // TODO initialize instance variables
+        edges = 0;
+        vertices = 0;
+        map = new HashMap<>();
+        locations = new ArrayList<>();
+        visited = new HashSet<>();
 
     }
 
@@ -36,7 +47,30 @@ public class GraphProcessor {
      */
 
     public void initialize(FileInputStream file) throws IOException {
-        // TODO implement by reading info and creating graph
+        Scanner scanner = new Scanner(file);
+        vertices = scanner.nextInt();
+        edges = scanner.nextInt();
+        for (int i = 0; i < vertices; i++){
+            String label = scanner.next();
+            double latitude = scanner.nextDouble();
+            double longitude = scanner.nextDouble();
+            locations.add(new Point(latitude, longitude));
+        }
+        scanner.nextLine();
+        for (int i = 0; i < edges; i++){
+            String currLine = scanner.nextLine();
+            String[] lst = currLine.split(" ");
+            int u = Integer.parseInt(lst[0]);
+            int v = Integer.parseInt(lst[1]);
+            String label = "";
+            if (lst.length > 2) label = lst[2];
+
+            map.putIfAbsent(locations.get(u), new ArrayList<Point>());
+            map.putIfAbsent(locations.get(v), new ArrayList<Point>());
+            map.get(locations.get(u)).add(locations.get(v));
+            map.get(locations.get(v)).add(locations.get(u));
+        }
+        scanner.close();
     }
 
     /**
