@@ -25,15 +25,15 @@ public class GraphProcessor {
     // include instance variables here
     int edges;
     int vertices;
-    Map<Point, ArrayList<Point>> map;
-    List<Point> points;
+    Map<Point, List<Point>> map;
+    Point[] points;
     HashSet<Point> visited;
 
     public GraphProcessor(){
         edges = 0;
         vertices = 0;
         map = new HashMap<>();
-        points = new ArrayList<>();
+        points = new Point[0];
         visited = new HashSet<>();
 
     }
@@ -51,21 +51,22 @@ public class GraphProcessor {
             Scanner scanner = new Scanner(file);
             vertices = scanner.nextInt();
             edges = scanner.nextInt();
-            for (int i = 0; i < vertices; i++){
-                double latitude = scanner.nextDouble();
-                double longitude = scanner.nextDouble();
-                points.add(new Point(latitude, longitude));
-            }
-            scanner.nextLine();
-            for (int i = 0; i < edges; i++){
-                String[] currLine = scanner.nextLine().split(" ");
-                int u = Integer.parseInt(currLine[0]);
-                int v = Integer.parseInt(currLine[1]);
+            points = new Point[vertices];
 
-                map.putIfAbsent(points.get(u), new ArrayList<Point>());
-                map.putIfAbsent(points.get(v), new ArrayList<Point>());
-                map.get(points.get(u)).add(points.get(v));
-                map.get(points.get(v)).add(points.get(u));
+            for (int i = 0; i < vertices; i++){
+                String[] verts = scanner.nextLine().split(" ");
+                double latitude = Double.parseDouble(verts[1]);
+                double longitude = Double.parseDouble(verts[2]);
+                points[i] = new Point(latitude, longitude);
+            }
+    
+            for (int i = 0; i < edges; i++){
+                String[] edge = scanner.nextLine().split(" ");
+                int u = Integer.parseInt(edge[0]);
+                int v = Integer.parseInt(edge[1]);
+
+                map.get(points[u]).add(points[v]);
+                map.get(points[v]).add(points[u]);
             }
             scanner.close();
         }
@@ -210,7 +211,7 @@ public class GraphProcessor {
 
 
 
-        return ret;
+        return null;
     }
     public static void main(String[] args) throws FileNotFoundException, IOException {
         String name = "data/usa.graph";
