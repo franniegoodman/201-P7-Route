@@ -26,14 +26,14 @@ public class GraphProcessor {
     int edges;
     int vertices;
     Map<Point, ArrayList<Point>> map;
-    List<Point> locations;
+    List<Point> points;
     HashSet<Point> visited;
 
     public GraphProcessor(){
         edges = 0;
         vertices = 0;
         map = new HashMap<>();
-        locations = new ArrayList<>();
+        points = new ArrayList<>();
         visited = new HashSet<>();
 
     }
@@ -47,30 +47,31 @@ public class GraphProcessor {
      */
 
     public void initialize(FileInputStream file) throws IOException {
-        Scanner scanner = new Scanner(file);
-        vertices = scanner.nextInt();
-        edges = scanner.nextInt();
-        for (int i = 0; i < vertices; i++){
-            String label = scanner.next();
-            double latitude = scanner.nextDouble();
-            double longitude = scanner.nextDouble();
-            locations.add(new Point(latitude, longitude));
-        }
-        scanner.nextLine();
-        for (int i = 0; i < edges; i++){
-            String currLine = scanner.nextLine();
-            String[] lst = currLine.split(" ");
-            int u = Integer.parseInt(lst[0]);
-            int v = Integer.parseInt(lst[1]);
-            String label = "";
-            if (lst.length > 2) label = lst[2];
+        try{
+            Scanner scanner = new Scanner(file);
+            vertices = scanner.nextInt();
+            edges = scanner.nextInt();
+            for (int i = 0; i < vertices; i++){
+                double latitude = scanner.nextDouble();
+                double longitude = scanner.nextDouble();
+                points.add(new Point(latitude, longitude));
+            }
+            scanner.nextLine();
+            for (int i = 0; i < edges; i++){
+                String[] currLine = scanner.nextLine().split(" ");
+                int u = Integer.parseInt(currLine[0]);
+                int v = Integer.parseInt(currLine[1]);
 
-            map.putIfAbsent(locations.get(u), new ArrayList<Point>());
-            map.putIfAbsent(locations.get(v), new ArrayList<Point>());
-            map.get(locations.get(u)).add(locations.get(v));
-            map.get(locations.get(v)).add(locations.get(u));
+                map.putIfAbsent(points.get(u), new ArrayList<Point>());
+                map.putIfAbsent(points.get(v), new ArrayList<Point>());
+                map.get(points.get(u)).add(points.get(v));
+                map.get(points.get(v)).add(points.get(u));
+            }
+            scanner.close();
         }
-        scanner.close();
+        catch (Exception unreadable){
+            throw new IOException("Could not read .graph file");
+        }
     }
 
     /**
