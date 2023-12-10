@@ -47,39 +47,38 @@ public class GraphProcessor {
      */
 
     public void initialize(FileInputStream file) throws IOException {
-        try{
-            Scanner scanner = new Scanner(file);
-            vertices = scanner.nextInt();
-            edges = scanner.nextInt();      
-            scanner.nextLine();
+       
+        Scanner scanner = new Scanner(file);
+        int vertices = scanner.nextInt();
+        int edges = scanner.nextInt();
 
-
-            for (int i = 0; i < vertices; i++){
-                String[] vert = scanner.nextLine().split(" ");
-                double latitude = Double.parseDouble(vert[1]);
-                double longitude = Double.parseDouble(vert[2]);
-                points.add(new Point(latitude, longitude));
-            }
-
-            for (int i = 0; i < edges; i++){
-                String line = scanner.nextLine().trim();  
-                if (!line.isEmpty()) {
-                    String[] edge = line.split(" ");
-                    int u = Integer.parseInt(edge[0]);
-                    int v = Integer.parseInt(edge[1]);
-
-                    map.putIfAbsent(points.get(u), new ArrayList<>());
-                    map.putIfAbsent(points.get(v), new ArrayList<>());
-                    map.get(points.get(u)).add(points.get(v));
-                    map.get(points.get(v)).add(points.get(u));
-                }
-            }
-
-            scanner.close();
+        scanner.nextLine();
+        
+        for (int i = 0; i < vertices; i++){
+            String[] currLine = scanner.nextLine().split(" ");
+            double latitude = Double.parseDouble(currLine[1]);
+            double longitude = Double.parseDouble(currLine[2]);
+            Point p = new Point(latitude, longitude);
+            points.add(p);
         }
-        catch (Exception error){
-            throw new IOException("Could not read .graph file");
+        scanner.nextLine();
+        for (int i = 0; i < edges; i++){
+            if (scanner.hasNextLine()){
+                String[] currLine = scanner.nextLine().split(" ");
+                int u = Integer.parseInt(currLine[0]);
+                int v = Integer.parseInt(currLine[1]);
+                Point p1 = points.get(u);
+                Point p2 = points.get(v);
+
+                map.putIfAbsent(p1, new ArrayList<>());
+                map.putIfAbsent(p2, new ArrayList<>());
+                map.get(p1).add(p2);
+                map.get(p2).add(p1);
+            }
         }
+        scanner.close();
+
+        
     }
 
     /**
@@ -150,7 +149,7 @@ public class GraphProcessor {
             Point myP = box.pop();
             if(myP.equals(p2)) return true;
             for(Point p : map.get(myP)){
-                if (! visited.contains(myP)) visited.add(myP); box.add(myP);
+                if (! visited.contains(p)) visited.add(p); box.add(p);
             }
         }
 
