@@ -109,9 +109,11 @@ public class GraphProcessor {
         Point closest = null;
         for (Point curr: map.keySet()){
             double distance = p.distance(curr);
-            if (distance < min) min = distance; closest = curr;
+            if (distance < min) {
+                min = distance; 
+                closest = curr;
+            }
         }
-
         return closest;
     }
 
@@ -146,10 +148,14 @@ public class GraphProcessor {
         Stack<Point> box = new Stack<>();
         visited.add(p1); box.add(p1);
         while(!box.isEmpty()){
+            
             Point myP = box.pop();
             if(myP.equals(p2)) return true;
-            for(Point p : map.get(myP)){
-                if (! visited.contains(p)) visited.add(p); box.add(p);
+
+            if(map.get(myP)!= null){
+                for(Point p : map.get(myP)){
+                    if (! visited.contains(p)) visited.add(p); box.add(p);
+                }
             }
         }
 
@@ -196,8 +202,7 @@ public class GraphProcessor {
                 if (dist < distMap.get(p)){
                     distMap.put(p, dist);
                     pathMap.put(p, curr);
-                    pq.add(p);
-                    
+                    pq.add(p);  
 
                 }
 
@@ -217,7 +222,7 @@ public class GraphProcessor {
 
 
 
-        return null;
+        return ret;
     }
     public static void main(String[] args) throws FileNotFoundException, IOException {
         String name = "data/usa.graph";
