@@ -145,21 +145,21 @@ public class GraphProcessor {
      * @return true if and onlyu if p2 is reachable from p1 (and vice versa)
      */
     public boolean connected(Point p1, Point p2) {
-        Stack<Point> box = new Stack<>();
-        visited.add(p1); box.add(p1);
-        while(!box.isEmpty()){
-            
-            Point myP = box.pop();
-            if(myP.equals(p2)) return true;
+        if (! map.containsKey(p1) || ! map.containsKey(p2))return false;
 
-            if(map.get(myP)!= null){
-                for(Point p : map.get(myP)){
-                    if (! visited.contains(p)) visited.add(p); box.add(p);
-                }
+        visited.clear();
+        Queue<Point> box = new LinkedList<>();
+        box.add(p1);
+
+        while(box.size() > 0){
+            Point curr = box.remove();
+            visited.add(curr);
+            for (Point p : map.get(curr)){
+                if(! visited.contains(p)) box.add(p);
             }
         }
 
-        return false;
+        return visited.contains(p2);
     }
 
     /**
