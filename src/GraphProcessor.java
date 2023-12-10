@@ -146,11 +146,8 @@ public class GraphProcessor {
      */
     public boolean connected(Point p1, Point p2) {
         if (! map.containsKey(p1) || ! map.containsKey(p2))return false;
-
-        visited.clear();
         Queue<Point> box = new LinkedList<>();
         box.add(p1);
-
         while(box.size() > 0){
             Point curr = box.remove();
             visited.add(curr);
@@ -158,7 +155,6 @@ public class GraphProcessor {
                 if(! visited.contains(p)) box.add(p);
             }
         }
-
         return visited.contains(p2);
     }
 
