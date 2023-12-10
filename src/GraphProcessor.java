@@ -47,18 +47,20 @@ public class GraphProcessor {
      */
 
     public void initialize(FileInputStream file) throws IOException {
-       // try{
+        try{
             Scanner scanner = new Scanner(file);
             vertices = scanner.nextInt();
             edges = scanner.nextInt();      
             scanner.nextLine();
+
+
             for (int i = 0; i < vertices; i++){
-                
                 String[] vert = scanner.nextLine().split(" ");
                 double latitude = Double.parseDouble(vert[1]);
                 double longitude = Double.parseDouble(vert[2]);
                 points.add(new Point(latitude, longitude));
             }
+
             for (int i = 0; i < edges; i++){
                 String line = scanner.nextLine().trim();  
                 if (!line.isEmpty()) {
@@ -72,11 +74,12 @@ public class GraphProcessor {
                     map.get(points.get(v)).add(points.get(u));
                 }
             }
+
             scanner.close();
-       // }
-        //    catch (Exception error){
-        //        throw new IOException("Could not read .graph file");
-         //   }
+        }
+        catch (Exception error){
+            throw new IOException("Could not read .graph file");
+        }
     }
 
     /**
